@@ -1,84 +1,60 @@
 ﻿-- Exported from QuickDBD: https://www.quickdatabasediagrams.com/
 -- Link to schema: https://app.quickdatabasediagrams.com/#/d/JZ7pyI
+-- NOTE! If you have used non-SQL datatypes in your design, you will have to change these here.
 
---Drops tables from database if they already exist
-DROP TABLE IF EXISTS departments;
-DROP TABLE IF EXISTS titles;
-DROP TABLE IF EXISTS employees;
-DROP TABLE IF EXISTS dept_emp;
-DROP TABLE IF EXISTS dept_manager;
-DROP TABLE IF EXISTS salaries;
 
---Create table departments  
-CREATE TABLE "departments" (
-    "dept_no" VARCHAR(10)   NOT NULL,
-    "dept_name" VARCHAR(25)   NOT NULL,
-    CONSTRAINT "pk_departments" PRIMARY KEY (
-        "dept_no"
-     )
-);
---Create table titles
-CREATE TABLE "titles" (
-    "title_id" VARCHAR(10)   NOT NULL,
-    "title" VARCHAR(25)   NOT NULL,
-    CONSTRAINT "pk_titles" PRIMARY KEY (
-        "title_id"
-     )
-);
---Create table employees
-CREATE TABLE "employees" (
-    "emp_no" INTEGER   NOT NULL,
-    "emp_title_id" VARCHAR(10)   NOT NULL,
-    "birth_date" DATE   NOT NULL,
-    "first_name" VARCHAR(40)   NOT NULL,
-    "last_name" VARCHAR(40)   NOT NULL,
-    "sex" VARCHAR(1)   NOT NULL,
-    "hire_date" DATE   NOT NULL,
-    CONSTRAINT "pk_employees" PRIMARY KEY (
-        "emp_no"
-     )
-);
---Create
-CREATE TABLE "dept_emp" (
-    "emp_no" INTEGER   NOT NULL,
-    "dept_no" VARCHAR(10)   NOT NULL,
-    CONSTRAINT "pk_dept_emp" PRIMARY KEY (
-        "emp_no","dept_no"
-     )
-);
---Create table dept_manager
-CREATE TABLE "dept_manager" (
-    "dept_no" VARCHAR(10)   NOT NULL,
-    "emp_no" INTEGER   NOT NULL,
-    CONSTRAINT "pk_dept_manager" PRIMARY KEY (
-        "dept_no","emp_no"
-     )
+CREATE TABLE `contacts` (
+    `contact_id` INT  NOT NULL ,
+    `first_name` VARCHAR  NOT NULL ,
+    `last_name` VARCHAR  NOT NULL ,
+    `email` VARCHAR  NOT NULL ,
+    PRIMARY KEY (
+        `contact_id`
+    )
 );
 
---Creat table salaries
-CREATE TABLE "salaries" (
-    "emp_no" INTEGER   NOT NULL,
-    "salary" INTEGER   NOT NULL,
-    CONSTRAINT "pk_salaries" PRIMARY KEY (
-        "emp_no"
-     )
+CREATE TABLE `category` (
+    `category_id` VARCHAR  NOT NULL ,
+    `category` VARCHAR  NOT NULL ,
+    PRIMARY KEY (
+        `category_id`
+    )
 );
 
--- Creates all Foreign Key constraints 
-ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
+CREATE TABLE `subcategory` (
+    `subcategory_id` VARCHAR  NOT NULL ,
+    `subcategory` VARCHAR  NOT NULL ,
+    PRIMARY KEY (
+        `subcategory_id`
+    )
+);
 
-ALTER TABLE "dept_emp" ADD CONSTRAINT "fk_dept_emp_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "departments" ("dept_no");
+CREATE TABLE `campaign` (
+    `cf_id` INT  NOT NULL ,
+    `contact_id` INT  NOT NULL ,
+    `company_name` VARCHAR  NOT NULL ,
+    `description` VARCHAR  NOT NULL ,
+    `goal` FLOAT  NOT NULL ,
+    `pleged` FLOAT  NOT NULL ,
+    `outcome` VARCHAR  NOT NULL ,
+    `backers_count` INT  NOT NULL ,
+    `country` VARCHAR(2)  NOT NULL ,
+    `currency` VARCHAR(3)  NOT NULL ,
+    `launched_date` DATE  NOT NULL ,
+    `end_date` DATE  NOT NULL ,
+    `category_id` VARCHAR  NOT NULL ,
+    `subcategory_id` VARCHAR  NOT NULL ,
+    PRIMARY KEY (
+        `cf_id`
+    )
+);
 
-ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_dept_no" FOREIGN KEY("dept_no")
-REFERENCES "departments" ("dept_no");
+ALTER TABLE `campaign` ADD CONSTRAINT `fk_campaign_contact_id` FOREIGN KEY(`contact_id`)
+REFERENCES `contacts` (`contact_id`);
 
-ALTER TABLE "dept_manager" ADD CONSTRAINT "fk_dept_manager_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
+ALTER TABLE `campaign` ADD CONSTRAINT `fk_campaign_category_id` FOREIGN KEY(`category_id`)
+REFERENCES `category` (`category_id`);
 
-ALTER TABLE "employees" ADD CONSTRAINT "fk_employees_emp_title_id" FOREIGN KEY("emp_title_id")
-REFERENCES "titles" ("title_id");
+ALTER TABLE `campaign` ADD CONSTRAINT `fk_campaign_subcategory_id` FOREIGN KEY(`subcategory_id`)
+REFERENCES `subcategory` (`subcategory_id`);
 
-ALTER TABLE "salaries" ADD CONSTRAINT "fk_salaries_emp_no" FOREIGN KEY("emp_no")
-REFERENCES "employees" ("emp_no");
